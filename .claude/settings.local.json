@@ -1,0 +1,12 @@
+{
+  "permissions": {
+    "allow": [
+      "Bash(jsonbox testdb users set:*)",
+      "Bash(jsonbox testdb users keys:*)",
+      "Bash(jsonbox testdb users get:*)",
+      "Bash(jsonbox:*)",
+      "Bash(yamlbox testdb users set:*)",
+      "Bash(yamlbox testdb users:*)"
+    ]
+  }
+}
