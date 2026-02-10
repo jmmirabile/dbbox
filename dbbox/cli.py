@@ -92,15 +92,17 @@ def main():
         formatter_class=argparse.RawDescriptionHelpFormatter,
         epilog="""
 Examples:
-  # List all databases (three equivalent ways)
+  # List all databases (four equivalent ways)
   dbbox databases                    # Positional command (recommended)
+  dbbox -l                           # Short flag
   dbbox --databases                  # Explicit flag
-  dbbox --list                       # Context-aware shortcut
+  dbbox --list                       # Long flag alias
 
-  # List tables in a database (three equivalent ways)
+  # List tables in a database (four equivalent ways)
   dbbox mydb tables                  # Positional command (recommended)
+  dbbox mydb -l                      # Short flag
   dbbox mydb --tables                # Explicit flag
-  dbbox mydb --list                  # Context-aware shortcut
+  dbbox mydb --list                  # Long flag alias
 
   # Create table with schema
   dbbox mydb users --schema name:TEXT age:INTEGER email:TEXT
@@ -119,6 +121,12 @@ Examples:
 
   # Delete row
   dbbox mydb users -d 1
+
+  # Drop table (with confirmation)
+  dbbox mydb users --drop-table
+
+  # Drop database (with confirmation)
+  dbbox mydb --drop-database
 
   # Import from stdin
   cat data.txt | dbbox mydb users --import
@@ -143,13 +151,15 @@ Database storage location (via ConfBox):
 
     # Database management
     parser.add_argument("--databases", action='store_true', help="List all databases")
-    parser.add_argument("--list", action='store_true', help="List databases (if no db specified) or tables (if db specified)")
+    parser.add_argument("-l", "--list", action='store_true', help="List databases (if no db specified) or tables (if db specified)")
 
     # Table management
     parser.add_argument("--schema", nargs='+', metavar="COL:TYPE", help="Create table with schema")
     parser.add_argument("--tables", action='store_true', help="List all tables")
     parser.add_argument("--info", action='store_true', help="Show table information")
+    parser.add_argument("--drop-table", action='store_true', help="Drop (delete) a table")
     parser.add_argument("--path", action='store_true', help="Show database file path")
+    parser.add_argument("--drop-database", action='store_true', help="Drop (delete) entire database")
 
     # Output formats
     parser.add_argument("--json", action='store_true', help="Output as JSON")
@@ -216,6 +226,27 @@ Database storage location (via ConfBox):
         print(f"Exists: {db_path.exists()}")
         return 0
 
+    # Handle drop database
+    if args.drop_database:
+        db_dir = get_app_data_dir("dbbox")
+        db_path = db_dir / f"{args.database}.db"
+
+        if not db_path.exists():
+            print(f"Database '{args.database}' does not exist")
+            return 1
+
+        # Confirmation prompt
+        response = input(f"Are you sure you want to drop database '{args.database}'? This cannot be undone. (yes/no): ")
+        if response.lower() not in ['yes', 'y']:
+            print("Cancelled")
+            return 0
+
+        with DBManager(args.database) as db:
+            db.drop_database()
+
+        print(f"✓ Dropped database '{args.database}'")
+        return 0
+
     # Use context manager for database connection
     try:
         with DBManager(args.database) as db:
@@ -248,6 +279,23 @@ Database storage location (via ConfBox):
                 print("-" * 50)
                 for col in info:
                     print(f"{col[1]:<20} {col[2]:<15} {bool(col[3])!s:<10} {bool(col[5])!s:<5}")
+                return 0
+
+            # Drop table
+            if args.drop_table:
+                info = db.table_info(args.table)
+                if not info:
+                    print(f"Table '{args.table}' does not exist")
+                    return 1
+
+                # Confirmation prompt
+                response = input(f"Are you sure you want to drop table '{args.table}' from database '{args.database}'? This cannot be undone. (yes/no): ")
+                if response.lower() not in ['yes', 'y']:
+                    print("Cancelled")
+                    return 0
+
+                db.drop_table(args.table)
+                print(f"✓ Dropped table '{args.table}'")
                 return 0
 
             # Create table

@@ -76,22 +76,24 @@ DBBox provides multiple ways to list databases and tables for flexibility:
 ### List All Databases
 
 ```bash
-# Three equivalent ways:
+# Four equivalent ways:
 dbbox databases         # Positional command (recommended)
+dbbox -l                # Short flag
 dbbox --databases       # Explicit flag
-dbbox --list            # Context-aware shortcut
+dbbox --list            # Long flag alias
 ```
 
 ### List Tables in a Database
 
 ```bash
-# Three equivalent ways:
+# Four equivalent ways:
 dbbox mydb tables       # Positional command (recommended)
+dbbox mydb -l           # Short flag
 dbbox mydb --tables     # Explicit flag
-dbbox mydb --list       # Context-aware shortcut
+dbbox mydb --list       # Long flag alias
 ```
 
-**The `--list` flag is context-aware:**
+**The `-l`/`--list` flag is context-aware:**
 - Without database name: lists databases
 - With database name: lists tables
 
@@ -161,6 +163,34 @@ dbbox <dbname> <table> -d <id>
 dbbox mydb products -d 5
 ```
 
+### Drop Table
+
+```bash
+dbbox <dbname> <table> --drop-table
+```
+
+**Example:**
+```bash
+dbbox mydb products --drop-table
+# Prompts for confirmation before dropping
+```
+
+**Warning:** This permanently deletes the table and all its data. Cannot be undone.
+
+### Drop Database
+
+```bash
+dbbox <dbname> --drop-database
+```
+
+**Example:**
+```bash
+dbbox mydb --drop-database
+# Prompts for confirmation before dropping
+```
+
+**Warning:** This permanently deletes the entire database file. Cannot be undone.
+
 ### Database Management
 
 ```bash
@@ -172,6 +202,12 @@ dbbox <dbname> <table> --info
 
 # Show database file path
 dbbox <dbname> --path
+
+# Drop a table (with confirmation)
+dbbox <dbname> <table> --drop-table
+
+# Drop entire database (with confirmation)
+dbbox <dbname> --drop-database
 ```
 
 ## Complete Example
@@ -206,6 +242,12 @@ dbbox contacts people --info
 
 # List all tables
 dbbox contacts --list
+
+# Drop a table (with confirmation prompt)
+dbbox contacts people --drop-table
+
+# Drop entire database (with confirmation prompt)
+dbbox contacts --drop-database
 ```
 
 ## Use Cases

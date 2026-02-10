@@ -191,3 +191,36 @@ class DBManager:
             return cursor.rowcount
         except sqlite3.Error as e:
             raise RuntimeError(f"Error deleting row: {e}")
+
+    def drop_table(self, table: str) -> bool:
+        """Drop (delete) a table from the database
+
+        Args:
+            table: Table name to drop
+
+        Returns:
+            True if successful
+        """
+        cursor = self.conn.cursor()
+
+        try:
+            cursor.execute(f"DROP TABLE IF EXISTS {table}")
+            self.conn.commit()
+            return True
+        except sqlite3.Error as e:
+            raise RuntimeError(f"Error dropping table: {e}")
+
+    def drop_database(self) -> bool:
+        """Drop (delete) the entire database file
+
+        Returns:
+            True if successful
+        """
+        # Close connection first
+        self.close()
+
+        # Delete the database file
+        if self.db_path.exists():
+            self.db_path.unlink()
+            return True
+        return False
