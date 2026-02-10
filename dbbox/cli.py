@@ -92,6 +92,16 @@ def main():
         formatter_class=argparse.RawDescriptionHelpFormatter,
         epilog="""
 Examples:
+  # List all databases (three equivalent ways)
+  dbbox databases                    # Positional command (recommended)
+  dbbox --databases                  # Explicit flag
+  dbbox --list                       # Context-aware shortcut
+
+  # List tables in a database (three equivalent ways)
+  dbbox mydb tables                  # Positional command (recommended)
+  dbbox mydb --tables                # Explicit flag
+  dbbox mydb --list                  # Context-aware shortcut
+
   # Create table with schema
   dbbox mydb users --schema name:TEXT age:INTEGER email:TEXT
 
@@ -133,10 +143,11 @@ Database storage location (via ConfBox):
 
     # Database management
     parser.add_argument("--databases", action='store_true', help="List all databases")
+    parser.add_argument("--list", action='store_true', help="List databases (if no db specified) or tables (if db specified)")
 
     # Table management
     parser.add_argument("--schema", nargs='+', metavar="COL:TYPE", help="Create table with schema")
-    parser.add_argument("--list", action='store_true', help="List all tables")
+    parser.add_argument("--tables", action='store_true', help="List all tables")
     parser.add_argument("--info", action='store_true', help="Show table information")
     parser.add_argument("--path", action='store_true', help="Show database file path")
 
@@ -147,8 +158,20 @@ Database storage location (via ConfBox):
 
     args = parser.parse_args()
 
+    # Support positional commands (like NoBox)
+    # "dbbox databases" -> same as "dbbox --databases"
+    if args.database == "databases":
+        args.databases = True
+        args.database = None
+
+    # "dbbox mydb tables" -> same as "dbbox mydb --tables"
+    if args.table == "tables":
+        args.tables = True
+        args.table = None
+
     # Handle list databases (no specific database needed)
-    if args.databases:
+    # Both --databases and --list (without db name) work the same way
+    if args.databases or (args.list and not args.database):
         db_dir = get_app_data_dir("dbbox")
 
         if not db_dir.exists():
@@ -182,7 +205,7 @@ Database storage location (via ConfBox):
 
     # Require database name for other operations
     if not args.database:
-        parser.error("database name is required for this operation (or use --databases to list all)")
+        parser.error("database name is required for this operation (or use --databases/--list to list all)")
 
     # Handle database path
     if args.path:
@@ -198,7 +221,8 @@ Database storage location (via ConfBox):
         with DBManager(args.database) as db:
 
             # List tables
-            if args.list:
+            # Both --tables and --list (with db name) work the same way
+            if args.tables or args.list:
                 tables = db.list_tables()
                 if tables:
                     print(f"Tables in '{args.database}':")

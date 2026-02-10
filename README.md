@@ -69,6 +69,32 @@ dbbox mydb --list
 dbbox mydb --path
 ```
 
+## Listing Databases and Tables
+
+DBBox provides multiple ways to list databases and tables for flexibility:
+
+### List All Databases
+
+```bash
+# Three equivalent ways:
+dbbox databases         # Positional command (recommended)
+dbbox --databases       # Explicit flag
+dbbox --list            # Context-aware shortcut
+```
+
+### List Tables in a Database
+
+```bash
+# Three equivalent ways:
+dbbox mydb tables       # Positional command (recommended)
+dbbox mydb --tables     # Explicit flag
+dbbox mydb --list       # Context-aware shortcut
+```
+
+**The `--list` flag is context-aware:**
+- Without database name: lists databases
+- With database name: lists tables
+
 ## Usage
 
 ### Create Table
