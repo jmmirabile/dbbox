@@ -2,7 +2,7 @@ from setuptools import setup, find_packages
 
 setup(
     name="dbbox",
-    version="0.1.0",
+    version="0.1.1",
     author="Jeff Mirabile",
     author_email="jmmirabile@gmail.com",
     description="Simple SQLite database utility with CRUD operations via CLI",

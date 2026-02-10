@@ -7,7 +7,7 @@ DBBox provides a simple command-line interface for managing SQLite databases
 with CRUD operations, schema management, and more.
 """
 
-__version__ = "0.1.0"
+__version__ = "0.1.1"
 __author__ = "Jeff Mirabile"
 __license__ = "MIT"
 
