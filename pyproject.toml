@@ -4,17 +4,16 @@ build-backend = "setuptools.build_meta"
 
 [project]
 name = "dbbox"
-version = "0.1.1"
+version = "0.1.2"
 description = "Simple SQLite database utility with CRUD operations via CLI"
 readme = "README.md"
 authors = [
     {name = "Jeff Mirabile", email = "jmmirabile@gmail.com"}
 ]
-license = {text = "MIT"}
+license = "MIT"
 classifiers = [
     "Development Status :: 3 - Alpha",
     "Intended Audience :: Developers",
-    "License :: OSI Approved :: MIT License",
     "Programming Language :: Python :: 3",
     "Programming Language :: Python :: 3.8",
     "Programming Language :: Python :: 3.9",
@@ -26,7 +25,7 @@ classifiers = [
 ]
 requires-python = ">=3.8"
 dependencies = [
-    "confbox>=0.1.0",
+    "confbox>=0.1.4",
 ]
 
 [project.urls]

@@ -25,7 +25,7 @@ setup(
     ],
     python_requires=">=3.8",
     install_requires=[
-        "confbox>=0.1.0",
+        "confbox>=0.1.4",
     ],
     entry_points={
         "console_scripts": [

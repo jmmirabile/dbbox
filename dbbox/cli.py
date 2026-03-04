@@ -11,6 +11,7 @@ import json
 from pathlib import Path
 from confbox import get_app_data_dir
 from .manager import DBManager
+from . import __version__
 
 
 def print_table(rows, cursor_description):
@@ -141,6 +142,7 @@ Database storage location (via ConfBox):
 
     parser.add_argument("database", nargs='?', help="Database name (without .db extension)")
     parser.add_argument("table", nargs='?', help="Table name")
+    parser.add_argument("-v", "--version", action="version", version=f"dbbox {__version__}")
 
     # CRUD operations
     parser.add_argument("-c", "--create", nargs='+', metavar="VALUE", help="Insert row with values")
